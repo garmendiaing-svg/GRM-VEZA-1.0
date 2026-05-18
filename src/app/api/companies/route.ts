@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { createCompany, getDashboardSnapshot } from "@/server/data/store";
+import { requireApiKey } from "@/server/auth/guard";
+import {
+  createRepositoryCompany,
+  getRepositoryDashboardSnapshot
+} from "@/server/data/repository";
 
 const companySchema = z.object({
   name: z.string().min(2),
@@ -18,10 +22,17 @@ const companySchema = z.object({
 });
 
 export async function GET() {
-  return NextResponse.json(getDashboardSnapshot().companies);
+  const snapshot = await getRepositoryDashboardSnapshot();
+  return NextResponse.json(snapshot.companies);
 }
 
 export async function POST(request: Request) {
+  const unauthorized = requireApiKey(request);
+
+  if (unauthorized) {
+    return unauthorized;
+  }
+
   const body = await request.json();
   const parsed = companySchema.safeParse(body);
 
@@ -32,5 +43,7 @@ export async function POST(request: Request) {
     );
   }
 
-  return NextResponse.json(createCompany(parsed.data), { status: 201 });
+  return NextResponse.json(await createRepositoryCompany(parsed.data), {
+    status: 201
+  });
 }
