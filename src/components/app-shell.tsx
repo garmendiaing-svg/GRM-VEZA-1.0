@@ -19,7 +19,7 @@ const navItems = [
   { label: "Proyectos", href: "/projects", icon: Zap },
   { label: "Propuestas", href: "/proposals", icon: CreditCard },
   { label: "Admin", href: "/admin", icon: PanelTop }
-];
+] as const;
 
 export function AppShell({ children }: { children: ReactNode }) {
   return (
