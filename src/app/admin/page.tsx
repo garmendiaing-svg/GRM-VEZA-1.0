@@ -3,17 +3,35 @@ import { Database, PanelTop, ShieldCheck } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { ModuleHeader } from "@/components/module-header";
 import { StatusPill } from "@/components/status-pill";
+import { getRuntimeStatus } from "@/server/config/runtime";
 
-const checks = [
-  ["Next.js", "Activo", "Frontend y API routes desplegadas en Vercel."],
-  ["Prisma schema", "Listo", "Modelo de datos preparado para PostgreSQL."],
-  ["Base de datos", "Pendiente", "Falta conectar DATABASE_URL de Neon, Supabase o Railway."],
-  ["OCR", "Pendiente", "Listo para integrar proveedor y guardar rawOcr."],
-  ["Storage", "Pendiente", "Configurar bucket S3-compatible para PDFs y fotos."],
-  ["Auth", "Pendiente", "Definir Auth.js, Clerk u otro proveedor."]
-];
+function label(status: "ACTIVE" | "READY" | "PENDING") {
+  if (status === "ACTIVE") {
+    return "Activo";
+  }
+
+  if (status === "READY") {
+    return "Listo";
+  }
+
+  return "Pendiente";
+}
+
+function tone(status: "ACTIVE" | "READY" | "PENDING") {
+  return status === "PENDING" ? "amber" : "teal";
+}
 
 export default function AdminPage() {
+  const runtime = getRuntimeStatus();
+  const checks = [
+    ["Next.js", "ACTIVE", "Frontend y API routes desplegadas en Vercel."],
+    ["Prisma schema", "READY", "Modelo de datos preparado para PostgreSQL."],
+    ["Base de datos", runtime.database.status, runtime.database.detail],
+    ["OCR", runtime.ocr.status, runtime.ocr.detail],
+    ["Storage", runtime.storage.status, runtime.storage.detail],
+    ["Auth", runtime.auth.status, runtime.auth.detail]
+  ] as const;
+
   return (
     <AppShell>
       <ModuleHeader
@@ -31,8 +49,8 @@ export default function AdminPage() {
           >
             <div className="flex items-center justify-between gap-3">
               <Database className="h-5 w-5 text-teal-700" />
-              <StatusPill tone={status === "Pendiente" ? "amber" : "teal"}>
-                {status}
+              <StatusPill tone={tone(status)}>
+                {label(status)}
               </StatusPill>
             </div>
             <h2 className="mt-4 text-lg font-semibold text-industrial-ink">
@@ -49,9 +67,9 @@ export default function AdminPage() {
           Nota importante
         </div>
         <p className="mt-3 text-sm leading-6 text-zinc-600">
-          En Vercel, los datos creados por formularios no quedan persistidos de
-          forma confiable hasta conectar PostgreSQL real y cambiar el repositorio
-          temporal por Prisma. La demo ya permite navegar y probar calculos.
+          Las APIs ya intentan usar Prisma si DATABASE_URL existe. Si una
+          integracion no tiene credenciales o falla, el MVP conserva fallback demo
+          para no dejar la aplicacion inutilizable durante configuracion.
         </p>
       </section>
     </AppShell>
