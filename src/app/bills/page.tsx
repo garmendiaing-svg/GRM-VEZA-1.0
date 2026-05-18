@@ -5,10 +5,10 @@ import { AppShell } from "@/components/app-shell";
 import { ModuleHeader } from "@/components/module-header";
 import { StatusPill } from "@/components/status-pill";
 import { formatCurrency, formatNumber } from "@/lib/format";
-import { getDashboardSnapshot } from "@/server/data/store";
+import { getRepositoryDashboardSnapshot } from "@/server/data/repository";
 
-export default function BillsPage() {
-  const snapshot = getDashboardSnapshot();
+export default async function BillsPage() {
+  const snapshot = await getRepositoryDashboardSnapshot();
 
   return (
     <AppShell>
