@@ -4,12 +4,13 @@ import { AppShell } from "@/components/app-shell";
 import { ModuleHeader } from "@/components/module-header";
 import { OpportunitySummary } from "@/components/opportunity-summary";
 import { StatusPill } from "@/components/status-pill";
+import { sampleBakeryAnalysis } from "@/domain/energy/sample-data";
 import { formatCurrency } from "@/lib/format";
-import { getDashboardSnapshot } from "@/server/data/store";
+import { getRepositoryDashboardSnapshot } from "@/server/data/repository";
 
-export default function AnalysesPage() {
-  const snapshot = getDashboardSnapshot();
-  const analysis = snapshot.analyses[0];
+export default async function AnalysesPage() {
+  const snapshot = await getRepositoryDashboardSnapshot();
+  const analysis = snapshot.analyses[0] ?? sampleBakeryAnalysis;
 
   return (
     <AppShell>
