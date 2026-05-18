@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { getAnalysisById } from "@/server/data/store";
+import { getRepositoryAnalysisById } from "@/server/data/repository";
 
 const reportSchema = z.object({
   analysisId: z.string().min(1)
@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const analysis = getAnalysisById(parsed.data.analysisId);
+  const analysis = await getRepositoryAnalysisById(parsed.data.analysisId);
 
   if (!analysis) {
     return NextResponse.json({ error: "Analysis not found" }, { status: 404 });
