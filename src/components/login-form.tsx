@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import type { Route } from "next";
 import type { FormEvent } from "react";
 import { useState } from "react";
 import { Loader2, LogIn } from "lucide-react";
@@ -9,6 +10,7 @@ export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get("next") ?? "/";
+  const nextPath = next.startsWith("/") && !next.startsWith("//") ? next : "/";
   const [passcode, setPasscode] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
 
@@ -27,7 +29,7 @@ export function LoginForm() {
       return;
     }
 
-    router.replace(next);
+    router.replace(nextPath as Route);
     router.refresh();
   }
 
