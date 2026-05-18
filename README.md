@@ -53,3 +53,7 @@ La primera pantalla es el dashboard operativo. La ruta `/bills/new` permite ingr
 - `POST /api/reports`
 
 Ver detalles en [docs/api.md](./docs/api.md).
+
+## Vercel y produccion
+
+El MVP ya incluye fallback demo, pero para persistencia real debes configurar `DATABASE_URL` en Vercel y ejecutar `npm run prisma:push` contra una base PostgreSQL. Los pasos de base de datos, storage, OCR y auth estan en [docs/vercel-next-steps.md](./docs/vercel-next-steps.md).
