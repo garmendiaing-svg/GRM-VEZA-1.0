@@ -7,24 +7,40 @@ import {
 import { createCommercialProposal } from "@/domain/finance/create-proposal";
 import { prisma } from "@/server/db/prisma";
 
+function toJsonValue<T>(value: T) {
+  return JSON.parse(JSON.stringify(value));
+}
+
 export async function getPrismaDashboardSnapshot() {
   const [companies, sites, bills, persistedAnalyses, proposals] = await Promise.all([
-    prisma.company.findMany({ orderBy: { createdAt: "desc" }, take: 25 }),
-    prisma.site.findMany({ orderBy: { createdAt: "desc" }, take: 50 }),
-    prisma.electricBill.findMany({ orderBy: { createdAt: "desc" }, take: 25 }),
+    prisma.company.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 25
+    }),
+    prisma.site.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 50
+    }),
+    prisma.electricBill.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 25
+    }),
     prisma.energyAnalysis.findMany({
       orderBy: [{ opportunityScore: "desc" }, { createdAt: "desc" }],
       take: 25,
       include: { recommendations: true }
     }),
-    prisma.proposal.findMany({ orderBy: { createdAt: "desc" }, take: 25 })
+    prisma.proposal.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 25
+    })
   ]);
 
   const analyses = persistedAnalyses.map((analysis) =>
     normalizeEnergyAnalysis(analysis)
   );
   const monthlySavingsClp = analyses.reduce(
-    (sum, analysis) => sum + analysis.estimatedSavingsClp,
+    (sum, analysis) => sum + (analysis.estimatedSavingsClp ?? 0),
     0
   );
 
@@ -123,10 +139,13 @@ export async function createPrismaCompany(input: {
           }
         : undefined
     },
-    include: { sites: true }
+    include: {
+      sites: true
+    }
   });
 
   const [site] = company.sites;
+
   return { company, site };
 }
 
@@ -145,7 +164,9 @@ export async function createPrismaBillAndAnalysis(input: {
   peakDemandKw?: number;
   fileUrl?: string;
 }) {
-  const site = await prisma.site.findUnique({ where: { id: input.siteId } });
+  const site = await prisma.site.findUnique({
+    where: { id: input.siteId }
+  });
 
   if (!site) {
     throw new Error("Site not found");
@@ -194,7 +215,7 @@ export async function createPrismaBillAndAnalysis(input: {
         qualityIssue: result.qualityIssue,
         technicalSummary: result.technicalSummary,
         commercialSummary: result.commercialSummary,
-        auditTrail: result.auditTrail,
+        auditTrail: toJsonValue(result.auditTrail),
         recommendations: {
           create: result.recommendations.map((recommendation) => ({
             category: recommendation.category,
@@ -205,7 +226,9 @@ export async function createPrismaBillAndAnalysis(input: {
           }))
         }
       },
-      include: { recommendations: true }
+      include: {
+        recommendations: true
+      }
     });
 
     return { bill, analysis: normalizeEnergyAnalysis(analysis) };
@@ -248,7 +271,7 @@ export async function createPrismaProposalFromAnalysis(input: {
       upfrontPercent: proposal.upfrontPaymentClp / proposal.implementationCostClp,
       sharedSavingsRate: proposal.sharedSavingsRate,
       monthlyFeeClp: proposal.suggestedMonitoringFeeClp,
-      payload: proposal
+      payload: toJsonValue(proposal)
     }
   });
 }
