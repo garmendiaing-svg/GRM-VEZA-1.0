@@ -1,4 +1,4 @@
-import { CalendarClock, CheckCircle2, ClipboardList, Zap } from "lucide-react";
+import { CalendarClock, CheckCircle2, Zap } from "lucide-react";
 
 import { AppShell } from "@/components/app-shell";
 import { ModuleHeader } from "@/components/module-header";
@@ -38,7 +38,7 @@ export default function ProjectsPage() {
         eyebrow="Seguimiento"
         title="Proyectos ESCO"
         description="Controla el avance desde diagnostico comercial hasta implementacion, medicion y monitoreo mensual."
-        icon={ClipboardList}
+        icon={Zap}
       />
 
       <section className="mt-6 rounded-lg border border-zinc-200 bg-white p-6 shadow-panel">
