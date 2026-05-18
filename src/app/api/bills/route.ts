@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { createBillAndAnalysis, getDashboardSnapshot } from "@/server/data/store";
+import { requireApiKey } from "@/server/auth/guard";
+import {
+  createRepositoryBillAndAnalysis,
+  getRepositoryDashboardSnapshot
+} from "@/server/data/repository";
 
 const billSchema = z.object({
   siteId: z.string().min(1),
@@ -20,10 +24,17 @@ const billSchema = z.object({
 });
 
 export async function GET() {
-  return NextResponse.json(getDashboardSnapshot().bills);
+  const snapshot = await getRepositoryDashboardSnapshot();
+  return NextResponse.json(snapshot.bills);
 }
 
 export async function POST(request: Request) {
+  const unauthorized = requireApiKey(request);
+
+  if (unauthorized) {
+    return unauthorized;
+  }
+
   const body = await request.json();
   const parsed = billSchema.safeParse(body);
 
@@ -34,6 +45,6 @@ export async function POST(request: Request) {
     );
   }
 
-  const result = createBillAndAnalysis(parsed.data);
+  const result = await createRepositoryBillAndAnalysis(parsed.data);
   return NextResponse.json(result, { status: 201 });
 }
