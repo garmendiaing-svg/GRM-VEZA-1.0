@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FileText, Plus, ReceiptText } from "lucide-react";
+import { FileText, Plus } from "lucide-react";
 
 import { AppShell } from "@/components/app-shell";
 import { ModuleHeader } from "@/components/module-header";
@@ -16,7 +16,7 @@ export default function BillsPage() {
         eyebrow="Modulo de boletas"
         title="Boletas electricas"
         description="Carga PDFs, fotos o datos manuales para extraer cargos, detectar problemas y disparar diagnosticos."
-        icon={ReceiptText}
+        icon={FileText}
         action={
           <Link
             href="/bills/new"
