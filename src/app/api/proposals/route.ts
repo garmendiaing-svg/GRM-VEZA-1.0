@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { createProposalFromAnalysis } from "@/server/data/store";
+import { requireApiKey } from "@/server/auth/guard";
+import { createRepositoryProposalFromAnalysis } from "@/server/data/repository";
 
 const proposalSchema = z.object({
   analysisId: z.string().min(1),
@@ -11,6 +12,12 @@ const proposalSchema = z.object({
 });
 
 export async function POST(request: Request) {
+  const unauthorized = requireApiKey(request);
+
+  if (unauthorized) {
+    return unauthorized;
+  }
+
   const body = await request.json();
   const parsed = proposalSchema.safeParse(body);
 
@@ -21,7 +28,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const proposal = createProposalFromAnalysis(parsed.data);
+  const proposal = await createRepositoryProposalFromAnalysis(parsed.data);
 
   if (!proposal) {
     return NextResponse.json({ error: "Analysis not found" }, { status: 404 });
