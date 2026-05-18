@@ -151,18 +151,19 @@ export async function createPrismaCompany(input: {
 
 export async function createPrismaBillAndAnalysis(input: {
   siteId: string;
-  distributor?: string;
-  customerNumber?: string;
-  billingMonth?: string;
+  distributor?: string | null;
+  customerNumber?: string | null;
+  billingMonth?: string | null;
   totalAmountClp: number;
-  energyKwh?: number;
-  energyCostClp?: number;
-  powerChargeClp?: number;
-  reactivePenaltyClp?: number;
-  otherChargesClp?: number;
-  contractedPowerKw?: number;
-  peakDemandKw?: number;
-  fileUrl?: string;
+  energyKwh?: number | null;
+  energyCostClp?: number | null;
+  powerChargeClp?: number | null;
+  reactivePenaltyClp?: number | null;
+  otherChargesClp?: number | null;
+  contractedPowerKw?: number | null;
+  peakDemandKw?: number | null;
+  businessType?: string | null;
+  fileUrl?: string | null;
 }) {
   const site = await prisma.site.findUnique({
     where: { id: input.siteId }
