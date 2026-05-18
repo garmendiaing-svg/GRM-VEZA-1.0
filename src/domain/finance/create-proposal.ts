@@ -33,8 +33,10 @@ export function createCommercialProposal(
   input: CommercialProposalInput
 ): CommercialProposal {
   const monthlySavings = roundClp(input.analysis.estimatedSavingsClp);
-  const implementationCost =
-    input.implementationCostClp ?? Math.max(650000, monthlySavings * 4);
+  const implementationCost = Math.max(
+    650000,
+    input.implementationCostClp ?? monthlySavings * 4
+  );
   const upfrontPercent = input.upfrontPercent ?? 0.35;
   const sharedSavingsRate = input.sharedSavingsRate ?? 0.3;
 
