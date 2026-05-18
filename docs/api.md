@@ -52,3 +52,29 @@ Genera una propuesta comercial preliminar desde un analisis.
 ## POST `/api/reports`
 
 Devuelve el contenido estructurado de un informe preliminar. La exportacion PDF queda lista para conectar con un renderer server-side.
+
+## POST `/api/uploads`
+
+Genera un destino de carga para boletas, fotos de tablero o evidencia. Si S3 esta configurado, retorna URL firmada; si no, retorna modo demo.
+
+```json
+{
+  "fileName": "boleta-cge.pdf",
+  "contentType": "application/pdf",
+  "folder": "bills"
+}
+```
+
+## POST `/api/ocr`
+
+Normaliza texto extraido de una boleta. En MVP funciona con `OCR_PROVIDER=manual`.
+
+```json
+{
+  "text": "CGE Total a pagar $859.812 consumo 4620 kWh cargo potencia $310.562 reactiva $92.140"
+}
+```
+
+## GET `/api/admin/status`
+
+Retorna estado de integraciones configuradas en Vercel.
