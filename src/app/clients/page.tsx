@@ -4,10 +4,10 @@ import { AppShell } from "@/components/app-shell";
 import { ClientIntakeForm } from "@/components/client-intake-form";
 import { ModuleHeader } from "@/components/module-header";
 import { StatusPill } from "@/components/status-pill";
-import { getDashboardSnapshot } from "@/server/data/store";
+import { getRepositoryDashboardSnapshot } from "@/server/data/repository";
 
-export default function ClientsPage() {
-  const snapshot = getDashboardSnapshot();
+export default async function ClientsPage() {
+  const snapshot = await getRepositoryDashboardSnapshot();
 
   return (
     <AppShell>
